@@ -92,7 +92,20 @@ Deno.serve(async (req) => {
           options: { redirectTo, data: { display_name: displayName } },
         } as Parameters<typeof admin.auth.admin.generateLink>[0]);
         if (error) throw error;
-        return json({ link: data.properties.action_link, type });
+        // Link auf die App-Seite /einladung statt direkt auf /auth/v1/verify:
+        // Der Einmal-Schlüssel wird erst beim Klick auf "Einladung annehmen" eingelöst,
+        // damit Linkvorschauen und Mail-Scanner ihn nicht vorher verbrauchen.
+        // Hat sich die Person noch nie angemeldet, zeigt die App trotzdem den Willkommens-Dialog.
+        let neverSignedIn = type === "invite";
+        if (existing) {
+          const { data: u } = await admin.auth.admin.getUserById(existing.id);
+          neverSignedIn = !u.user?.last_sign_in_at;
+        }
+        const base = (redirectTo ?? new URL(req.url).origin).replace(/\/+$/, "");
+        const link =
+          `${base}/einladung?token_hash=${encodeURIComponent(data.properties.hashed_token)}&type=${type}` +
+          (neverSignedIn ? "&ui=invite" : "");
+        return json({ link, type });
       }
 
       case "delete": {

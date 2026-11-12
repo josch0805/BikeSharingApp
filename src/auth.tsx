@@ -9,6 +9,7 @@ interface AuthState {
   loading: boolean;
   needsPassword: boolean;
   passwordSet: () => void;
+  markNeedsPassword: () => void;
   reloadProfile: () => Promise<void>;
 }
 
@@ -60,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         loading,
         needsPassword,
         passwordSet,
+        markNeedsPassword: () => setNeedsPassword(true),
         reloadProfile: () => loadProfile(session?.user.id),
       }}
     >

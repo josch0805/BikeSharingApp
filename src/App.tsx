@@ -1,5 +1,6 @@
-import { NavLink, Navigate, Route, Routes } from "react-router-dom";
+import { NavLink, Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "./auth";
+import AcceptInvite from "./pages/AcceptInvite";
 import Login from "./pages/Login";
 import SetPassword from "./pages/SetPassword";
 import Home from "./pages/Home";
@@ -10,8 +11,20 @@ import Admin from "./pages/Admin";
 import ProfilePage from "./pages/ProfilePage";
 
 export default function App() {
-  const { session, profile, loading, needsPassword } = useAuth();
+  const { session, profile, loading, needsPassword, markNeedsPassword } = useAuth();
+  const location = useLocation();
+  const navigate = useNavigate();
 
+  if (location.pathname === "/einladung") {
+    return (
+      <AcceptInvite
+        onDone={() => {
+          markNeedsPassword();
+          navigate("/", { replace: true });
+        }}
+      />
+    );
+  }
   if (loading) return <div className="center muted">Lädt …</div>;
   if (!session) return <Login />;
   if (needsPassword) return <SetPassword />;
