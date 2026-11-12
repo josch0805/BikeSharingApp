@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Lastenrad</string>
+    <string name="title_activity_main">Lastenrad</string>
+    <string name="package_name">de.lastenrad.sharing</string>
+    <string name="custom_url_scheme">de.lastenrad.sharing</string>
+</resources>
